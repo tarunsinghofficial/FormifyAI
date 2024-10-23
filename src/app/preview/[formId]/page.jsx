@@ -1,7 +1,7 @@
 // pages/preview/[formId].js
 
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { generatedForms, formResponses } from "../../../../config/schema";
 import db from "../../../../config";
 import { eq, and } from "drizzle-orm";
@@ -15,19 +15,7 @@ const PreviewPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const { user, isSignedIn, isLoaded } = useUser();
 
-  useEffect(() => {
-    if (params) {
-      fetchFormData();
-    }
-  }, [params]);
-
-  useEffect(() => {
-    if (isSignedIn && params) {
-      checkPreviousSubmission();
-    }
-  }, [isSignedIn, params]);
-
-  const fetchFormData = async () => {
+  const fetchFormData = useCallback(async () => {
     try {
       const res = await db
         .select()
@@ -46,9 +34,9 @@ const PreviewPage = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params?.formId]);
 
-  const checkPreviousSubmission = async () => {
+  const checkPreviousSubmission = useCallback(async () => {
     if (!user?.primaryEmailAddress?.emailAddress) {
       console.log("No user email available");
       return;
@@ -70,7 +58,19 @@ const PreviewPage = ({ params }) => {
     } catch (error) {
       console.error("Error checking previous submission:", error);
     }
-  };
+  }, [user?.primaryEmailAddress?.emailAddress, params?.formId]);
+
+  useEffect(() => {
+    if (params) {
+      fetchFormData();
+    }
+  }, [params, fetchFormData]);
+
+  useEffect(() => {
+    if (isSignedIn && params) {
+      checkPreviousSubmission();
+    }
+  }, [isSignedIn, params, checkPreviousSubmission]);
 
   if (!isLoaded || loading) {
     return (
@@ -95,7 +95,9 @@ const PreviewPage = ({ params }) => {
           <h2 className="text-dark-blue mb-4 text-2xl font-bold">
             Sign in to submit the form
           </h2>
-          <p className="text-dark-blue mb-4">You need to be signed in to submit this form.</p>
+          <p className="text-dark-blue mb-4">
+            You need to be signed in to submit this form.
+          </p>
           <SignInButton mode="modal">
             <Button className="bg-primary-blue text-white">Sign In</Button>
           </SignInButton>
@@ -109,7 +111,7 @@ const PreviewPage = ({ params }) => {
       <div className="bg-primary-blue flex items-center justify-center min-h-screen">
         <div className="p-8 text-center bg-white rounded-lg">
           <h2 className="text-dark-blue mb-4 text-2xl font-bold">
-            You've already submitted this form
+            You&apos;ve already submitted this form
           </h2>
           <p className="text-dark-blue mb-4">
             Thank you for your submission. You can only submit this form once.

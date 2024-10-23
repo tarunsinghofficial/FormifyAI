@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
@@ -20,13 +20,6 @@ function Dashboard() {
 
   const { user } = useUser();
 
-  useEffect(() => {
-    if (user) {
-      fetchForms();
-      fetchTotalResponses();
-    }
-  }, [user]);
-
   const handleReload = () => {
     setIsSpinning(true);
     setTimeout(() => {
@@ -34,7 +27,7 @@ function Dashboard() {
     }, 1000);
   };
 
-  const fetchForms = async () => {
+  const fetchForms = useCallback(async () => {
     try {
       const forms = await db
         .select()
@@ -62,9 +55,9 @@ function Dashboard() {
       console.log(error);
       setLoading(false);
     }
-  };
+  }, [user?.primaryEmailAddress?.emailAddress]);
 
-  const fetchTotalResponses = async () => {
+  const fetchTotalResponses = useCallback(async () => {
     try {
       const responses = await db
         .select()
@@ -87,7 +80,14 @@ function Dashboard() {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [user?.primaryEmailAddress?.emailAddress]);
+
+  useEffect(() => {
+    if (user) {
+      fetchForms();
+      fetchTotalResponses();
+    }
+  }, [user, fetchForms, fetchTotalResponses]);
 
   const refreshData = () => {
     fetchForms();
@@ -139,7 +139,7 @@ function Dashboard() {
                 <CardTitle>Statistics</CardTitle>
               </CardHeader>
               <CardContent>
-              <BarChart
+                <BarChart
                   xAxis={[
                     {
                       scaleType: "band",
@@ -169,9 +169,11 @@ function Dashboard() {
                 <div className="mt-4">
                   <p className="text-sm font-medium">Forms Overview</p>
                   <p className="text-3xl font-bold">{totalForms}</p>
-                  <p className="mt-2 text-sm font-medium">Today's Forms</p>
+                  <p className="mt-2 text-sm font-medium">Today&apos;s Forms</p>
                   <p className="text-3xl font-bold">{todayCount}</p>
-                  <p className="mt-2 text-sm font-medium">Today's Responses</p>
+                  <p className="mt-2 text-sm font-medium">
+                    Today&apos;s Responses
+                  </p>
                   <p className="text-3xl font-bold">{todayResponses}</p>
                 </div>
               </CardContent>
@@ -202,7 +204,7 @@ function Dashboard() {
       </div>
       <div className="mt-20">
         <h1 className="text-7xl text-slate-500 text-opacity-15 font-bold text-center">
-          That's all folks!
+          That&apos;s all folks!
         </h1>
         <p className="text-slate-500 text-opacity-30 mt-2 text-lg text-center">
           You have reached the end of the forms.

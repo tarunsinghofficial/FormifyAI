@@ -1,4 +1,4 @@
-export default [
+const gradientData = [
   {
     name: "default",
     gradient: "linear-gradient(135deg, #f5f5f5 0%, #f5f5f5 100%)",
@@ -64,3 +64,5 @@ export default [
     gradient: "linear-gradient(135deg, #4776E6 0%, #8E54E9 100%)",
   },
 ];
+
+export default gradientData;

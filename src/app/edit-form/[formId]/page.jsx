@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import db from "../../../../config";
 import { eq, and } from "drizzle-orm";
 import { useUser } from "@clerk/nextjs";
@@ -17,11 +17,7 @@ const EditForm = ({ params }) => {
   const [data, setData] = useState(null);
   const [record, setRecord] = useState(null);
 
-  useEffect(() => {
-    user && getFormData();
-  }, [user]);
-
-  const getFormData = async () => {
+  const getFormData = useCallback(async () => {
     try {
       const email = user?.primaryEmailAddress?.emailAddress;
       const res = await db
@@ -37,11 +33,16 @@ const EditForm = ({ params }) => {
       console.log("Database response:", JSON.parse(res[0].jsonform));
       setRecord(res[0]);
       setData(JSON.parse(res[0].jsonform));
-      
     } catch (error) {
       console.error("Error fetching form data:", error);
     }
-  };
+  }, [user?.primaryEmailAddress?.emailAddress, params?.formId]);
+
+  useEffect(() => {
+    if (user) {
+      getFormData();
+    }
+  }, [user, getFormData]);
 
   const onFieldUpdate = (value, index) => {
     setData((prevData) => {
@@ -60,12 +61,13 @@ const EditForm = ({ params }) => {
   const deleteField = (indexToRemove) => {
     setData((prevData) => {
       const newData = { ...prevData };
-      newData.formFields = newData.formFields.filter((item, index) => index !== indexToRemove);
+      newData.formFields = newData.formFields.filter(
+        (item, index) => index !== indexToRemove
+      );
       updateFormFieldsInDb(newData); // Update the database with the new data
       return newData;
     });
   };
-  
 
   const updateFormFieldsInDb = async (latestData) => {
     try {
@@ -75,7 +77,10 @@ const EditForm = ({ params }) => {
         .where(
           and(
             eq(generatedForms.id, record.id),
-            eq(generatedForms.createdBy, user?.primaryEmailAddress?.emailAddress)
+            eq(
+              generatedForms.createdBy,
+              user?.primaryEmailAddress?.emailAddress
+            )
           )
         );
 
@@ -92,29 +97,29 @@ const EditForm = ({ params }) => {
   console.log("Form ID:", record?.id);
 
   return (
-    <div className="min-h-screen w-full mt-16 px-8 py-4">
+    <div className="w-full min-h-screen px-8 py-4 mt-16">
       <div className="flex items-center justify-between">
-      <div
-        onClick={() => route.back()}
-        className="flex items-center text-black dark:text-white font-semibold hover:cursor-pointer"
-      >
-        <ArrowLeft className="w-6 h-6" />
-        Back
+        <div
+          onClick={() => route.back()}
+          className="dark:text-white hover:cursor-pointer flex items-center font-semibold text-black"
+        >
+          <ArrowLeft className="w-6 h-6" />
+          Back
+        </div>
+        <div className="flex gap-4">
+          <Link href={`/preview/${record?.id}`} target="_blank">
+            <Button className="border-primary-blue text-primary-blue bg-transparent border-2">
+              <ExternalLink className="w-6 h-6 mr-2" />
+              Preview
+            </Button>
+          </Link>
+          <Button className="bg-primary-blue">
+            <Share className="w-6 h-6 mr-2" />
+            Share
+          </Button>
+        </div>
       </div>
-      <div className="flex gap-4">
-        <Link href={`/preview/${record?.id}`} target="_blank">
-        <Button className="bg-transparent border-2 border-primary-blue text-primary-blue">
-          <ExternalLink className="w-6 h-6 mr-2" />
-          Preview
-        </Button>
-        </Link>
-        <Button className="bg-primary-blue">
-          <Share className="w-6 h-6 mr-2" />
-          Share
-        </Button>
-      </div>
-      </div>
-      <div className="mt-10 grid grid-cols-8 space-x-4">
+      <div className="grid grid-cols-8 mt-10 space-x-4">
         <div className="col-span-6 bg-[#f5f5f5] dark:bg-[#1C1C1C] rounded-lg">
           <div className="overflow-y-scroll px-0 md:px-[10em] lg:px-[20em]">
             <GeneratedFormUi

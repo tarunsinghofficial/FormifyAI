@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { generatedForms, formResponses } from "../../../../config/schema";
 import db from "../../../../config";
 import { eq, sql } from "drizzle-orm";
@@ -12,18 +12,9 @@ function FormResponses() {
   const [responses, setResponses] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
 
-  useEffect(() => {
-    user && getResponses();
-  }, [user]);
+  const getResponses = useCallback(async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
 
-  const handleReload = () => {
-    setIsSpinning(true);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000); 
-  };
-
-  const getResponses = async () => {
     const res = await db
       .select({
         id: generatedForms.id,
@@ -38,33 +29,50 @@ function FormResponses() {
       .from(generatedForms)
       .leftJoin(formResponses, eq(generatedForms.id, formResponses.formRef))
       .where(
-        eq(generatedForms.createdBy, user?.primaryEmailAddress?.emailAddress)
+        eq(generatedForms.createdBy, user.primaryEmailAddress.emailAddress)
       )
       .groupBy(generatedForms.id);
 
     console.log("dataa", res);
     setResponses(res);
+  }, [user?.primaryEmailAddress?.emailAddress]); // Add user email as dependency
+
+  useEffect(() => {
+    if (user) {
+      getResponses();
+    }
+  }, [user, getResponses]); // Add getResponses as dependency
+
+  const handleReload = () => {
+    setIsSpinning(true);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#1C1C1C]  h-screen p-2 md:p-5 lg:p-10">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold text-black lg:text-3xl md:text-3xl dark:text-white">
+          <h1 className="lg:text-3xl md:text-3xl dark:text-white text-xl font-bold text-black">
             Form Responses
           </h1>
-          <h2 className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          <h2 className="text-slate-600 dark:text-slate-300 mt-2 text-sm">
             View all the responses to your forms
           </h2>
         </div>
         <div>
-        <button onClick={handleReload} className="flex items-center gap-1">
-            <RefreshCcw color="white" size={14} className={`${isSpinning ? 'animate-spin' : 'animate-none'}`} />
+          <button onClick={handleReload} className="flex items-center gap-1">
+            <RefreshCcw
+              color="white"
+              size={14}
+              className={`${isSpinning ? "animate-spin" : "animate-none"}`}
+            />
             <p className="text-[14px]">Reload</p>
           </button>
         </div>
       </div>
-      <div className="grid grid-rows-2 gap-5 mt-10 md:grid-cols-3 lg:grid-cols-3">
+      <div className="md:grid-cols-3 lg:grid-cols-3 grid grid-rows-2 gap-5 mt-10">
         {responses.map((response, index) => (
           <div key={index}>
             <Card
