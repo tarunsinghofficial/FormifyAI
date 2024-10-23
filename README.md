@@ -69,7 +69,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 For any inquiries or support, feel free to reach out:
 
 - **Author**: Tarun Singh
-- **Email**: tarunsinghwap7@example.com
+- **Email**: tarunsinghwap7@gmail.com
 - **LinkedIn**: https://www.linkedin.com/in/tarunsingh24
 
 ### Key Sections:
