@@ -44,11 +44,11 @@ FormifyAI supports multiple input types such as checkboxes, radio buttons, combo
 
 
 ## Usage
-Sign up or log in using Clerk's authentication.
-Use the AI-powered form generator by providing a prompt.
-Customize form fields (checkboxes, radios, selects) with values and labels as needed.
-Upload files and handle errors with the built-in file management system.
-View and manage your created forms through the dashboard.
+- Sign up or log in using Clerk's authentication.
+- Use the AI-powered form generator by providing a prompt.
+- Customize form fields (checkboxes, radios, selects) with values and labels as needed.
+- Upload files and handle errors with the built-in file management system.
+- View and manage your created forms through the dashboard.
 
 ## API Documentation
 FormifyAI integrates with the GPT-4 API to generate forms. You can find the API documentation here (replace with relevant link).
@@ -57,10 +57,10 @@ FormifyAI integrates with the GPT-4 API to generate forms. You can find the API 
 We welcome contributions! Please follow these steps:
 
 ## Fork the repository.
-Create a new branch (git checkout -b feature-branch).
-Commit your changes (git commit -m 'Add new feature').
-Push to the branch (git push origin feature-branch).
-Create a pull request.
+- Create a new branch (git checkout -b feature-branch).
+- Commit your changes (git commit -m 'Add new feature').
+- Push to the branch (git push origin feature-branch).
+- Create a pull request.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for more details.
