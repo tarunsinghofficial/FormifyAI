@@ -23,26 +23,13 @@ FormifyAI supports multiple input types such as checkboxes, radio buttons, combo
 
 - **Frontend**: Next.js, Tailwind CSS
 - **Backend**: Node.js, Express
-- **Database**: MongoDB (or any database you're using)
+- **Database**: NeonDB
 - **AI/ML**: GPT-4 API (or ChatGPT API) for form creation
-- **Storage**: Amazon S3 (for file handling)
+- **Storage**: Supabase Storage (for file handling)
 - **Authentication**: Clerk (for user authentication)
 - **ORM**: DrizzleORM
 - **Hosting**: Vercel
-
-## Installation
-
-### Prerequisites
-
-- Node.js (>= 14.x)
-- npm or yarn
-- MongoDB or any database you're using
-- Amazon S3 account (for file uploads)
-- Clerk API keys (for authentication)
-
-
-
-
+- 
 ## Usage
 - Sign up or log in using Clerk's authentication.
 - Use the AI-powered form generator by providing a prompt.
@@ -51,19 +38,7 @@ FormifyAI supports multiple input types such as checkboxes, radio buttons, combo
 - View and manage your created forms through the dashboard.
 
 ## API Documentation
-FormifyAI integrates with the GPT-4 API to generate forms. You can find the API documentation here (replace with relevant link).
-
-## Contributing
-We welcome contributions! Please follow these steps:
-
-## Fork the repository.
-- Create a new branch (git checkout -b feature-branch).
-- Commit your changes (git commit -m 'Add new feature').
-- Push to the branch (git push origin feature-branch).
-- Create a pull request.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+FormifyAI integrates with the GPT-4 API to generate forms. You can find the API documentation here soon.
 
 ## Contact
 For any inquiries or support, feel free to reach out:
@@ -71,14 +46,3 @@ For any inquiries or support, feel free to reach out:
 - **Author**: Tarun Singh
 - **Email**: tarunsinghwap7@gmail.com
 - **LinkedIn**: https://www.linkedin.com/in/tarunsingh24
-
-### Key Sections:
-- **Overview**: Summarizes what FormifyAI does.
-- **Features**: Lists the core features of the project.
-- **Technologies Used**: Outlines the tech stack.
-- **Installation**: Provides setup instructions for cloning and running the project locally.
-- **Usage**: Explains how to use the app.
-- **Contributing**: Details how others can contribute to the project.
-- **Contact**: Provides your contact information.
-
-You can update any paths, links, or details according to your specific setup before adding this to your GitHub project!
