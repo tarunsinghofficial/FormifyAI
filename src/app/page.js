@@ -231,15 +231,25 @@ export default function Home() {
                         feature.position === "right"
                           ? "from-blue-500/20 to-purple-500/20"
                           : "from-green-500/20 to-teal-500/20"
-                      } rounded-lg blur-2xl`}
+                      } rounded-lg blur-2xl transform ${
+                        feature.position === "right" ? "rotate-3" : "-rotate-3"
+                      }`}
                     />
-                    <Image
-                      src={feature.image}
-                      alt={feature.title}
-                      width={1500}
-                      height={1500}
-                      className="shadow-3xl relative z-10 rounded-lg"
-                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="relative z-10"
+                    >
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={1500}
+                        height={1500}
+                        className="shadow-3xl rounded-lg"
+                      />
+                    </motion.div>
                   </div>
                 </motion.div>
               </motion.div>

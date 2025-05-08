@@ -135,7 +135,7 @@ function Dashboard() {
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#1C1C1C] p-2 md:p-5 lg:p-10">
-      <div className="flex items-start justify-between">
+      <div className="flex justify-between items-start">
         <div>
           <h1 className="lg:text-3xl md:text-3xl dark:text-white text-xl font-bold text-black">
             Overview
@@ -154,13 +154,13 @@ function Dashboard() {
         </div>
       </div>
       <div className="flex flex-col gap-10 mt-10">
-        <div className="md:grid-cols-2 h-fit grid w-full grid-cols-1 gap-5">
+        <div className="md:grid-cols-2 h-fit grid grid-cols-1 gap-5 w-full">
           <div className="bg-white dark:bg-[#242424] p-10 rounded-lg shadow-md w-full h-[30rem] flex flex-col items-start justify-center">
             <h2 className="mb-4 text-xl font-bold">Overview</h2>
             <Bar data={barChartData} />
           </div>
           <div className="bg-white dark:bg-[#242424] p-10 rounded-lg shadow-md w-full h-[30rem] flex flex-col items-start justify-center">
-            <h2 className="mb-4 text-xl font-bold">Today's Stats</h2>
+            <h2 className="mb-4 text-xl font-bold">Today&apos;s Stats</h2>
             <Doughnut data={donutChartData} />
           </div>
         </div>
@@ -173,7 +173,7 @@ function Dashboard() {
           ? Array(8)
               .fill(0)
               .map((_, index) => (
-                <div key={index} className="skeleton h-52 w-full"></div>
+                <div key={index} className="skeleton w-full h-52"></div>
               ))
           : fetchedData.slice(0, 8).map((form, index) => (
               <div key={index}>
@@ -186,10 +186,10 @@ function Dashboard() {
             ))}
       </div>
       <div className="mt-20">
-        <h1 className="text-7xl text-slate-500 text-opacity-15 font-bold text-center">
+        <h1 className="text-slate-500 text-opacity-15 text-7xl font-bold text-center">
           That&apos;s all folks!
         </h1>
-        <p className="text-slate-500 text-opacity-30 mt-2 text-lg text-center">
+        <p className="text-slate-500 mt-2 text-lg text-center text-opacity-30">
           You have reached the end of the forms.
         </p>
       </div>
