@@ -6,6 +6,7 @@ import { eq, sql } from "drizzle-orm";
 import { useUser } from "@clerk/nextjs";
 import Card from "./components/Card";
 import { RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function FormResponses() {
   const { user } = useUser();
@@ -52,7 +53,7 @@ function FormResponses() {
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#1C1C1C]  h-screen p-2 md:p-5 lg:p-10">
-      <div className="flex items-start justify-between">
+      <div className="flex justify-between items-start">
         <div>
           <h1 className="lg:text-3xl md:text-3xl dark:text-white text-xl font-bold text-black">
             Form Responses
@@ -62,14 +63,12 @@ function FormResponses() {
           </h2>
         </div>
         <div>
-          <button onClick={handleReload} className="flex items-center gap-1">
+          <Button onClick={handleReload} variant="outline" size="sm">
             <RefreshCcw
-              color="white"
-              size={14}
-              className={`${isSpinning ? "animate-spin" : "animate-none"}`}
+              className={`mr-2 h-4 w-4 ${isSpinning ? "animate-spin" : ""}`}
             />
-            <p className="text-[14px]">Reload</p>
-          </button>
+            Reload
+          </Button>
         </div>
       </div>
       <div className="md:grid-cols-3 lg:grid-cols-3 grid grid-rows-2 gap-5 mt-10">

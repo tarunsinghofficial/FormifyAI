@@ -4,12 +4,29 @@ import db from "../../../../config";
 import { eq, and } from "drizzle-orm";
 import { useUser } from "@clerk/nextjs";
 import { generatedForms } from "../../../../config/schema";
-import { ArrowLeft, ExternalLink, PlusCircle, Share } from "lucide-react";
+import { ArrowLeft, Eye, Share2, Copy, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import GeneratedFormUi from "../components/GeneratedFormUi";
-import DesignControllers from "../components/DesignControllers";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import toast from "react-hot-toast";
 
 const EditForm = ({ params }) => {
   const { user } = useUser();
@@ -64,7 +81,7 @@ const EditForm = ({ params }) => {
       newData.formFields = newData.formFields.filter(
         (item, index) => index !== indexToRemove
       );
-      updateFormFieldsInDb(newData); // Update the database with the new data
+      updateFormFieldsInDb(newData);
       return newData;
     });
   };
@@ -90,49 +107,149 @@ const EditForm = ({ params }) => {
     }
   };
 
+  const copyFormLink = () => {
+    const formLink = `${window.location.origin}/preview/${record?.id}`;
+    navigator.clipboard.writeText(formLink);
+    toast.success("Form link copied to clipboard!");
+  };
+
+  const downloadFormData = () => {
+    const formData = {
+      title: data.formTitle,
+      description: data.formSubheading,
+      fields: data.formFields,
+    };
+
+    const blob = new Blob([JSON.stringify(formData, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${data.formTitle
+      .toLowerCase()
+      .replace(/\s+/g, "-")}-form-data.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (!data) {
     return <div>Loading...</div>;
   }
 
-  console.log("Form ID:", record?.id);
-
   return (
-    <div className="w-full min-h-screen px-8 py-4 mt-16">
-      <div className="flex items-center justify-between">
-        <div
-          onClick={() => route.back()}
-          className="dark:text-white hover:cursor-pointer flex items-center font-semibold text-black"
-        >
-          <ArrowLeft className="w-6 h-6" />
-          Back
-        </div>
-        <div className="flex gap-4">
-          <Link href={`/preview/${record?.id}`} target="_blank">
-            <Button className="border-primary-blue text-primary-blue bg-transparent border-2">
-              <ExternalLink className="w-6 h-6 mr-2" />
-              Preview
+    <div className="flex flex-col h-screen">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-white dark:bg-[#1C1C1C] border-b border-gray-200 dark:border-gray-800 z-50">
+        <div className="flex justify-between items-center px-8 py-4">
+          <div className="flex gap-4 items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => route.back()}
+              className="hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <ArrowLeft className="w-5 h-5" />
             </Button>
-          </Link>
-          <Button className="bg-primary-blue">
-            <Share className="w-6 h-6 mr-2" />
-            Share
-          </Button>
+            <h1 className="dark:text-white text-xl font-semibold">
+              {data.formTitle}
+            </h1>
+          </div>
+
+          <div className="flex gap-2 items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href={`/preview/${record?.id}`} target="_blank">
+                    <Button variant="ghost" size="icon">
+                      <Eye className="w-5 h-5" />
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Preview Form</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" onClick={copyFormLink}>
+                    <Copy className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copy Form Link</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={downloadFormData}
+                  >
+                    <Download className="w-5 h-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Download Form Data</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <AlertDialog>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Share2 className="w-5 h-5" />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Share Form</p>
+                  </TooltipContent>
+                </Tooltip>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Share Form</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Share this form with others using the following link:
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="dark:bg-gray-800 flex gap-2 items-center p-4 bg-gray-100 rounded-lg">
+                    <input
+                      type="text"
+                      readOnly
+                      value={`${window.location.origin}/preview/${record?.id}`}
+                      className="focus:outline-none flex-1 bg-transparent border-none"
+                    />
+                    <Button variant="ghost" size="sm" onClick={copyFormLink}>
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
-      <div className="grid grid-cols-8 mt-10 space-x-4">
-        <div className="col-span-6 bg-[#f5f5f5] dark:bg-[#1C1C1C] rounded-lg">
-          <div className="overflow-y-scroll px-0 md:px-[10em] lg:px-[20em]">
+
+      {/* Scrollable Form Content */}
+      <div className="overflow-y-auto flex-1 mt-16 bg-[#F8F9FA]">
+        <div className="px-8 py-4">
+          <div className="mx-auto max-w-4xl">
             <GeneratedFormUi
               data={data}
               onFieldUpdate={onFieldUpdate}
               deleteField={(index) => deleteField(index)}
               formId={record?.id}
             />
-          </div>
-        </div>
-        <div className="col-span-2 bg-[#f5f5f5] dark:bg-[#1C1C1C] rounded-lg">
-          <div>
-            <DesignControllers />
           </div>
         </div>
       </div>

@@ -20,18 +20,29 @@ const SideNav = () => {
   const menuList = [
     { name: "Dashboard", icon: LucideHouse, link: "/dashboard" },
     { name: "My Forms", icon: Library, link: "/dashboard/myforms" },
-    { name: "Responses", icon: MessageSquare, link: "/dashboard/form-responses" },
-    { name: "Analytics", icon: BarChart, link: "/dashboard/analytics" },
-    { name: "Premium", icon: DollarSign, link: "/dashboard/subscription" },
+    {
+      name: "Responses",
+      icon: MessageSquare,
+      link: "/dashboard/form-responses",
+    },
+    {
+      name: "Advanced Analytics",
+      icon: BarChart,
+      link: "/dashboard/advanced-analytics",
+    },
   ];
 
   return (
-    <div className={`h-full shadow-xl ${open ? 'w-64' : 'w-20'} transition-width duration-300 bg-white dark:bg-[#1C1C1C] border-r-[1px] dark:border-[#2B2D33]`}>
-      <div className="flex flex-col justify-between h-full p-4">
+    <div
+      className={`h-full shadow-xl ${
+        open ? "w-64" : "w-20"
+      } transition-width duration-300 bg-white dark:bg-[#1C1C1C] border-r-[1px] dark:border-[#2B2D33]`}
+    >
+      <div className="flex flex-col justify-between p-4 h-full">
         <div>
-        <button
+          <button
             onClick={toggleSidebar}
-            className="flex items-center justify-center mb-4"
+            className="flex justify-center items-center mb-4"
           >
             {open ? (
               <IconChevronLeft className="w-6 h-6 dark:text-[#585858]" />
@@ -51,7 +62,7 @@ const SideNav = () => {
                   }`}
               >
                 <a href={menu.link} className="flex items-center">
-                  <menu.icon className="w-6 h-6 mr-2" />
+                  <menu.icon className="mr-2 w-6 h-6" />
                   {open && menu.name}
                 </a>
               </li>

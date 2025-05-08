@@ -1,4 +1,4 @@
-import { Edit2Icon, Trash2Icon } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 const FieldEdit = ({ defaultValue, onUpdate, onDelete }) => {
   const [placeholder, setPlaceholder] = useState("");
@@ -43,10 +43,12 @@ const FieldEdit = ({ defaultValue, onUpdate, onDelete }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 text-dark-blue hover:cursor-pointer w-auto">
+    <div className="text-dark-blue group-hover:opacity-100 flex gap-2 items-center opacity-0 transition-opacity duration-200">
       <Dialog>
         <DialogTrigger asChild>
-          <Edit2Icon className="h-4 w-4 text-green-600" />
+          <button className="hover:bg-gray-100 dark:hover:bg-gray-800 p-1 rounded-md transition-colors">
+            <Pencil className="w-4 h-4 text-green-600" />
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -75,7 +77,9 @@ const FieldEdit = ({ defaultValue, onUpdate, onDelete }) => {
       </Dialog>
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogTrigger asChild>
-          <Trash2Icon className="h-4 w-4 text-red-600" />
+          <button className="hover:bg-gray-100 dark:hover:bg-gray-800 p-1 rounded-md transition-colors">
+            <Trash className="w-4 h-4 text-red-600" />
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -84,7 +88,10 @@ const FieldEdit = ({ defaultValue, onUpdate, onDelete }) => {
           <Button onClick={handleDelete} className="mr-2">
             Delete
           </Button>
-          <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setIsDeleteDialogOpen(false)}
+          >
             Cancel
           </Button>
         </DialogContent>

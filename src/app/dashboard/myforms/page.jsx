@@ -6,6 +6,7 @@ import { generatedForms } from "../../../../config/schema";
 import { useUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import { RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function MyForms() {
   const [fetchedData, setFetchedData] = React.useState([]);
@@ -51,7 +52,7 @@ function MyForms() {
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#1C1C1C] h-screen p-2 md:p-5 lg:p-10">
-      <div className="flex items-start justify-between">
+      <div className="flex justify-between items-start">
         <div>
           <h1 className="lg:text-3xl md:text-3xl dark:text-white text-xl font-bold text-black">
             My Forms
@@ -61,14 +62,12 @@ function MyForms() {
           </h2>
         </div>
         <div>
-          <button onClick={handleReload} className="flex items-center gap-1">
+          <Button onClick={handleReload} variant="outline" size="sm">
             <RefreshCcw
-              color="white"
-              size={14}
-              className={`${isSpinning ? "animate-spin" : "animate-none"}`}
+              className={`mr-2 h-4 w-4 ${isSpinning ? "animate-spin" : ""}`}
             />
-            <p className="text-[14px]">Reload</p>
-          </button>
+            Reload
+          </Button>
         </div>
       </div>
       <div>{/* add the overview of Todays form creation if made */}</div>
@@ -78,7 +77,7 @@ function MyForms() {
           ? Array(8)
               .fill(0)
               .map((_, index) => (
-                <div key={index} className="skeleton h-52 w-full"></div>
+                <div key={index} className="skeleton w-full h-52"></div>
               ))
           : fetchedData.slice(0, 8).map((form, index) => (
               <div key={index}>

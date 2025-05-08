@@ -22,8 +22,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-console.log("Supabase URL:", supabaseUrl);
-console.log("Supabase Anon Key:", supabaseAnonKey);
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function GeneratedFormUi({
@@ -64,7 +63,7 @@ function GeneratedFormUi({
 
       try {
         const { data, error } = await supabase.storage
-          .from("formifyStorage")
+          .from("user-data")
           .upload(`public/${file.name}`, file, { upsert: true });
 
         if (error) {
@@ -74,7 +73,7 @@ function GeneratedFormUi({
         console.log("Supabase upload response:", data);
 
         const { data: urlData } = supabase.storage
-          .from("formifyStorage")
+          .from("user-data")
           .getPublicUrl(`public/${file.name}`);
 
         const fileUrl = urlData.publicUrl;
@@ -105,7 +104,7 @@ function GeneratedFormUi({
       setLoading(true);
       try {
         const { error } = await supabase.storage
-          .from("formifyStorage")
+          .from("user-data")
           .remove([`public/${uploadedFile.name}`]);
 
         if (error) {
@@ -194,7 +193,9 @@ function GeneratedFormUi({
   if (submitted) {
     return (
       <div className="bg-white dark:bg-[#242424] dark:border-[0.5px] dark:border-[#20A072] dark:border-opacity-15 dark:hover:border-opacity-40 transition-all duration-300 rounded-lg p-8 m-4 h-full w-full max-w-[600px] text-center">
-        <h2 className="mb-4 text-2xl font-bold">Thank you for your submission!</h2>
+        <h2 className="mb-4 text-2xl font-bold">
+          Thank you for your submission!
+        </h2>
         <p className="mb-4">Your response has been recorded.</p>
         <Button onClick={() => window.close()} className="mr-2">
           Close Window
@@ -207,7 +208,7 @@ function GeneratedFormUi({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col justify-center items-center w-auto h-full">
       <form ref={formRef} onSubmit={onHandleSubmit}>
         <div className="bg-white dark:bg-[#242424] dark:border-[0.5px] dark:border-[#20A072] dark:border-opacity-15 dark:hover:border-opacity-40 transition-all duration-300 rounded-lg p-8 m-4 h-full w-full max-w-[600px]">
           <h1 className="text-dark-blue dark:text-white text-3xl font-bold">
@@ -223,12 +224,15 @@ function GeneratedFormUi({
         <div className="bg-white dark:bg-[#242424] dark:border-[0.5px] dark:border-[#20A072] dark:border-opacity-15 dark:hover:border-opacity-40 transition-all duration-300 rounded-lg p-8 m-4 h-full w-full max-w-[600px]">
           <div className="mt-5 space-y-4">
             {data?.formFields?.map((field, index) => (
-              <div key={index} className="flex items-start gap-4">
+              <div key={index} className="group flex gap-4 items-start">
                 {field.fieldType === "checkbox" && (
-                  <div className="items-start w-full gap-4">
-                    <div className="w-full space-y-1">
+                  <div className="gap-4 items-start w-full">
+                    <div className="space-y-1 w-full">
                       <label className="text-slate-600 dark:text-slate-300">
-                        {field?.fieldLabel || field?.formLabel || field?.label} {field?.isRequired && <span className="text-red-400">*</span>}
+                        {field?.fieldLabel || field?.formLabel || field?.label}{" "}
+                        {field?.isRequired && (
+                          <span className="text-red-400">*</span>
+                        )}
                       </label>
                       {field.options?.map((item, idx) => {
                         const option =
@@ -260,9 +264,12 @@ function GeneratedFormUi({
 
                 {field.fieldType === "radio" && (
                   <div>
-                    <div className="w-full space-y-1">
+                    <div className="space-y-1 w-full">
                       <label className="text-slate-600 dark:text-slate-300">
-                        {field?.fieldLabel || field?.formLabel || field?.label} {field?.isRequired && <span className="text-red-400">*</span>}
+                        {field?.fieldLabel || field?.formLabel || field?.label}{" "}
+                        {field?.isRequired && (
+                          <span className="text-red-400">*</span>
+                        )}
                       </label>
                       <RadioGroup
                         required={field?.isRequired || field?.required}
@@ -299,9 +306,12 @@ function GeneratedFormUi({
                 )}
 
                 {field.fieldType === "select" && (
-                  <div className="w-full space-y-1">
+                  <div className="space-y-1 w-full">
                     <label className="text-slate-600 dark:text-slate-300">
-                      {field?.fieldLabel || field?.formLabel || field?.label} {field?.isRequired && <span className="text-red-400">*</span>}
+                      {field?.fieldLabel || field?.formLabel || field?.label}{" "}
+                      {field?.isRequired && (
+                        <span className="text-red-400">*</span>
+                      )}
                     </label>
                     <Select
                       required={field?.isRequired || field?.required}
@@ -334,9 +344,12 @@ function GeneratedFormUi({
                 )}
 
                 {field.fieldType === "textarea" && (
-                  <div className="w-full space-y-1">
+                  <div className="space-y-1 w-full">
                     <label className="text-slate-600 dark:text-slate-300">
-                      {field?.fieldLabel} {field?.isRequired && <span className="text-red-400">*</span>}
+                      {field?.fieldLabel}{" "}
+                      {field?.isRequired && (
+                        <span className="text-red-400">*</span>
+                      )}
                     </label>
                     <Textarea
                       name={field?.fieldName}
@@ -348,9 +361,12 @@ function GeneratedFormUi({
                   </div>
                 )}
                 {field.fieldType === "number" && (
-                  <div className="w-full space-y-1">
+                  <div className="space-y-1 w-full">
                     <label className="text-slate-600 dark:text-slate-300">
-                      {field?.fieldLabel} {field?.isRequired && <span className="text-red-400">*</span>}
+                      {field?.fieldLabel}{" "}
+                      {field?.isRequired && (
+                        <span className="text-red-400">*</span>
+                      )}
                     </label>
                     <Input
                       name={field?.fieldName}
@@ -362,9 +378,12 @@ function GeneratedFormUi({
                   </div>
                 )}
                 {field.fieldType === "file" && (
-                  <div className="w-full space-y-1">
+                  <div className="space-y-1 w-full">
                     <label className="text-slate-600 dark:text-slate-300">
-                      {field?.fieldLabel} {field?.isRequired && <span className="text-red-400">*</span>}
+                      {field?.fieldLabel}{" "}
+                      {field?.isRequired && (
+                        <span className="text-red-400">*</span>
+                      )}
                       <span className="text-xs italic">
                         (only jpg, jpeg, pdf, xlsx, docx are allowed.)
                       </span>
@@ -414,9 +433,12 @@ function GeneratedFormUi({
                   "number",
                   "file",
                 ].indexOf(field.fieldType) === -1 && (
-                  <div className="w-full space-y-1">
+                  <div className="space-y-1 w-full">
                     <label className="text-slate-600 dark:text-slate-300">
-                      {field?.fieldLabel} {field?.isRequired && <span className="text-red-400">*</span>}
+                      {field?.fieldLabel}{" "}
+                      {field?.isRequired && (
+                        <span className="text-red-400">*</span>
+                      )}
                     </label>
                     <Input
                       name={field?.fieldName}
@@ -432,7 +454,7 @@ function GeneratedFormUi({
                     <FieldEdit
                       defaultValue={field}
                       onUpdate={(value) => onFieldUpdate(value, index)}
-                      deleteField={() => deleteField(index)}
+                      onDelete={() => deleteField(index)}
                     />
                   )}
                 </div>

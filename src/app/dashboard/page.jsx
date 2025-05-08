@@ -1,13 +1,31 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { desc, eq } from "drizzle-orm";
 import db from "../../../config";
 import { generatedForms, formResponses } from "../../../config/schema";
-import { BarChart, PieChart } from "@mui/x-charts";
+import { Bar, Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
+import Card from "./components/Card";
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
 
 function Dashboard() {
   const [fetchedData, setFetchedData] = useState([]);
@@ -93,21 +111,27 @@ function Dashboard() {
     fetchForms();
   };
 
-  const barChartData = [
-    {
-      name: "Total Forms Created",
-      total: totalForms,
-    },
-    {
-      name: "Total Responses Received",
-      total: totalResponses,
-    },
-  ];
+  const barChartData = {
+    labels: ["Total Forms Created", "Total Responses Received"],
+    datasets: [
+      {
+        label: "Count",
+        data: [totalForms, totalResponses],
+        backgroundColor: ["#4CAF50", "#FF9800"],
+      },
+    ],
+  };
 
-  const donutChartData = [
-    { name: "Forms Created", value: totalForms },
-    { name: "Forms Left", value: 100 - totalForms },
-  ];
+  const donutChartData = {
+    labels: ["Forms Created Today", "Forms Left"],
+    datasets: [
+      {
+        label: "Today",
+        data: [todayCount, 100 - todayCount],
+        backgroundColor: ["#2196F3", "#E0E0E0"],
+      },
+    ],
+  };
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#1C1C1C] p-2 md:p-5 lg:p-10">
@@ -129,59 +153,18 @@ function Dashboard() {
           </Button>
         </div>
       </div>
-      <div className="mt-10">
-        <div className="md:grid-cols-2 grid grid-cols-1 gap-6">
-          {loading ? (
-            <Card className="animate-pulse w-full h-32" />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Statistics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <BarChart
-                  xAxis={[
-                    {
-                      scaleType: "band",
-                      data: barChartData.map((item) => item.name),
-                    },
-                  ]}
-                  series={[{ data: barChartData.map((item) => item.value) }]}
-                  width={500}
-                  height={300}
-                />
-              </CardContent>
-            </Card>
-          )}
-          {loading ? (
-            <Card className="animate-pulse w-full h-32" />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Total Forms Created</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PieChart
-                  series={[{ data: donutChartData }]}
-                  width={500}
-                  height={300}
-                />
-                <div className="mt-4">
-                  <p className="text-sm font-medium">Forms Overview</p>
-                  <p className="text-3xl font-bold">{totalForms}</p>
-                  <p className="mt-2 text-sm font-medium">Today&apos;s Forms</p>
-                  <p className="text-3xl font-bold">{todayCount}</p>
-                  <p className="mt-2 text-sm font-medium">
-                    Today&apos;s Responses
-                  </p>
-                  <p className="text-3xl font-bold">{todayResponses}</p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+      <div className="flex flex-col gap-10 mt-10">
+        <div className="md:grid-cols-2 h-fit grid w-full grid-cols-1 gap-5">
+          <div className="bg-white dark:bg-[#242424] p-10 rounded-lg shadow-md w-full h-[30rem] flex flex-col items-start justify-center">
+            <h2 className="mb-4 text-xl font-bold">Overview</h2>
+            <Bar data={barChartData} />
+          </div>
+          <div className="bg-white dark:bg-[#242424] p-10 rounded-lg shadow-md w-full h-[30rem] flex flex-col items-start justify-center">
+            <h2 className="mb-4 text-xl font-bold">Today's Stats</h2>
+            <Doughnut data={donutChartData} />
+          </div>
         </div>
       </div>
-      {/* all other forms */}
       <h1 className="lg:text-3xl md:text-3xl dark:text-white mt-10 text-xl font-bold text-black">
         Recent Forms
       </h1>
